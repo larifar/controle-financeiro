@@ -1,0 +1,8 @@
+CREATE TABLE transactionals (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  value NUMERIC(10,2) NOT NULL,
+  date TIMESTAMP NOT NULL,
+  type VARCHAR(50) NOT NULL,
+  subtype VARCHAR(50)
+);
