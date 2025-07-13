@@ -1,4 +1,4 @@
-package com.app.controle_financeiro.domain;
+package com.app.controle_financeiro.domain.entities;
 
 public class User {
     private long id;

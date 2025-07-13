@@ -1,4 +1,4 @@
-package com.app.controle_financeiro.domain;
+package com.app.controle_financeiro.domain.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
