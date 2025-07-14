@@ -10,18 +10,19 @@ import com.app.controle_financeiro.infra.persistence.repository.TransactionRepos
 import com.app.controle_financeiro.infra.persistence.repository.UserRepositoryImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 public class BeanConfig {
 
     @Bean
-    public ICreateUser createUser(IUserRepository userRepository){
-        return new CreateUserImpl(userRepository);
+    public ICreateUser createUser(IUserRepository userRepository, BCryptPasswordEncoder passwordEncoder){
+        return new CreateUserImpl(userRepository, passwordEncoder);
     }
 
     @Bean
-    public ISaveUser saveUser(IUserRepository userRepository) {
-        return new SaveUserImpl(userRepository);
+    public ISaveUser saveUser(IUserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+        return new SaveUserImpl(userRepository, passwordEncoder);
     }
 
     @Bean
@@ -82,5 +83,10 @@ public class BeanConfig {
     @Bean
     public IGetTransactionsByTypeAndByPeriod getTransactionsByTypeAndByPeriod(ITransactionRepository transactionRepository, IUserRepository userRepository){
         return new GetTransactionsByTypeAndByPeriodImpl(transactionRepository, userRepository);
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 }
