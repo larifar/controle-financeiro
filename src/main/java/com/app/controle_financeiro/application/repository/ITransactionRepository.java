@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface ITransactionRepository {
     Transaction save(Transaction transaction);
+    void deleteAll(long userId);
     void delete(long id);
     Optional<Transaction> findById(long id);
     List<Transaction> getFromDateUntilDatebyType(LocalDateTime from, LocalDateTime until, long userId, TransactionTypeEnum type);

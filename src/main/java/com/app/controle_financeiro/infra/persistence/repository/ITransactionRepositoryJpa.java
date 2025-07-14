@@ -2,6 +2,8 @@ package com.app.controle_financeiro.infra.persistence.repository;
 
 import com.app.controle_financeiro.domain.entities.TransactionTypeEnum;
 import com.app.controle_financeiro.infra.persistence.entities.TransactionEntity;
+import com.app.controle_financeiro.infra.persistence.entities.UserEntity;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +21,7 @@ public interface ITransactionRepositoryJpa extends JpaRepository<TransactionEnti
             @Param("userId") long userId,
             @Param("type") TransactionTypeEnum type
     );
+
+    @Transactional
+    void deleteAllByUserId(UserEntity user);
 }
