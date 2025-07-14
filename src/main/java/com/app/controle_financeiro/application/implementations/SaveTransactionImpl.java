@@ -5,8 +5,8 @@ import com.app.controle_financeiro.application.repository.IUserRepository;
 import com.app.controle_financeiro.application.useCases.ISaveTransaction;
 import com.app.controle_financeiro.domain.entities.Transaction;
 import com.app.controle_financeiro.domain.exceptions.ExceptionCodeEnum;
-import com.app.controle_financeiro.domain.exceptions.TransactionalException;
-import com.app.controle_financeiro.domain.exceptions.TransactionalNotFoundException;
+import com.app.controle_financeiro.domain.exceptions.TransactionException;
+import com.app.controle_financeiro.domain.exceptions.TransactionNotFoundException;
 import com.app.controle_financeiro.domain.exceptions.UserNotFoundException;
 
 import java.math.BigDecimal;
@@ -22,20 +22,20 @@ public class SaveTransactionImpl implements ISaveTransaction {
     }
 
     @Override
-    public void save(Transaction transaction) throws TransactionalNotFoundException {
+    public void save(Transaction transaction) throws TransactionNotFoundException {
         if (transaction.getId() > 0){
             if (transactionRepository.findById(transaction.getId()).isEmpty()){
-                throw new TransactionalNotFoundException(ExceptionCodeEnum.TRA001.getMessage(), ExceptionCodeEnum.TRA001.getCode());
+                throw new TransactionNotFoundException(ExceptionCodeEnum.TRA001.getMessage(), ExceptionCodeEnum.TRA001.getCode());
             }
         }
         if (transaction.getUserId() <= 0){
-            throw new TransactionalException(ExceptionCodeEnum.TRA003.getMessage(), ExceptionCodeEnum.TRA003.getCode());
+            throw new TransactionException(ExceptionCodeEnum.TRA003.getMessage(), ExceptionCodeEnum.TRA003.getCode());
         }
         if (userRepository.findById(transaction.getUserId()).isEmpty()){
             throw new UserNotFoundException(ExceptionCodeEnum.USER01.getMessage(), ExceptionCodeEnum.USER01.getCode());
         }
         if (transaction.getValue() == null || transaction.getValue().compareTo(BigDecimal.ZERO) <=  0 ){
-            throw new TransactionalException(ExceptionCodeEnum.TRA002.getCode(), ExceptionCodeEnum.TRA002.getCode());
+            throw new TransactionException(ExceptionCodeEnum.TRA002.getCode(), ExceptionCodeEnum.TRA002.getCode());
         }
         if(transaction.getDate() == null){
             transaction.setDate(LocalDateTime.now());
