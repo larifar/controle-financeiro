@@ -6,12 +6,15 @@ import com.app.controle_financeiro.domain.exceptions.UserAlreadyExistsException;
 import com.app.controle_financeiro.domain.exceptions.UserException;
 import com.app.controle_financeiro.application.repository.IUserRepository;
 import com.app.controle_financeiro.application.useCases.ICreateUser;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class CreateUserImpl implements ICreateUser {
     private final IUserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public CreateUserImpl(IUserRepository userRepository) {
+    public CreateUserImpl(IUserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -39,6 +42,7 @@ public class CreateUserImpl implements ICreateUser {
         if (userRepository.findByEmail(user.getEmail()).isPresent()){
             throw new UserAlreadyExistsException("Já existe um usuário cadastrado com esse email!", ExceptionCodeEnum.USER02.getCode());
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 }

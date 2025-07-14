@@ -6,12 +6,17 @@ import com.app.controle_financeiro.domain.entities.User;
 import com.app.controle_financeiro.domain.exceptions.ExceptionCodeEnum;
 import com.app.controle_financeiro.domain.exceptions.UserException;
 import com.app.controle_financeiro.domain.exceptions.UserNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.Optional;
 
 public class SaveUserImpl implements ISaveUser {
     private final IUserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public SaveUserImpl(IUserRepository userRepository) {
+    public SaveUserImpl(IUserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -19,22 +24,26 @@ public class SaveUserImpl implements ISaveUser {
         if (user.getId() <= 0){
             throw new UserException("Usuário deve ter id!", ExceptionCodeEnum.USER04.getCode());
         }
-        if (userRepository.findById(user.getId()).isEmpty()){
+        Optional<User> userExists = userRepository.findById(user.getId());
+        if (userExists.isEmpty()){
             throw new UserNotFoundException(ExceptionCodeEnum.USER01.getMessage(), ExceptionCodeEnum.USER01.getCode());
         }
         if (user.getTelegramId() <= 0 ) {
-            throw new UserException("Usuário deve ter um telegram Id", ExceptionCodeEnum.USER03.getCode());
+            user.setTelegramId(userExists.get().getTelegramId());
         }
 
         if (user.getEmail() == null || user.getEmail().isBlank()) {
-            throw new UserException("Usuário deve ter um email", ExceptionCodeEnum.USER03.getCode());
+            user.setEmail(userExists.get().getEmail());
         }
+
         if (user.getName() == null || user.getName().isBlank()) {
-            throw new UserException("Usuário deve ter um nome!", ExceptionCodeEnum.USER03.getCode());
+            user.setName(userExists.get().getName());
         }
 
         if (user.getPassword() == null || user.getPassword().isBlank()) {
-            throw new UserException("Usuário deve ter uma senha!", ExceptionCodeEnum.USER03.getCode());
+            user.setPassword(userExists.get().getPassword());
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         userRepository.save(user);
     }
