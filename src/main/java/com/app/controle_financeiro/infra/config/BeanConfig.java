@@ -73,4 +73,14 @@ public class BeanConfig {
     public ITransactionRepository transactionRepository(ITransactionRepositoryJpa jpa, IUserRepositoryJpa userJpa) {
         return new TransactionRepositoryImpl(jpa, userJpa);
     }
+
+    @Bean
+    public IFindTransactionById findTransactionById(ITransactionRepository transactionRepository){
+        return new FindTransactionByIdImpl(transactionRepository);
+    }
+
+    @Bean
+    public IGetTransactionsByTypeAndByPeriod getTransactionsByTypeAndByPeriod(ITransactionRepository transactionRepository, IUserRepository userRepository){
+        return new GetTransactionsByTypeAndByPeriodImpl(transactionRepository, userRepository);
+    }
 }
