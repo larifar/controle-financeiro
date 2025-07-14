@@ -35,6 +35,15 @@ public class TransactionRepositoryImpl implements ITransactionRepository {
     }
 
     @Override
+    public void deleteAll(long userId) {
+        Optional<UserEntity> user = userRepositoryJpa.findById(userId);
+        if (user.isEmpty()){
+            throw new UserNotFoundException(ExceptionCodeEnum.USER01.getMessage(), ExceptionCodeEnum.USER01.getCode());
+        }
+        transactionRepositoryJpa.deleteAllByUserId(user.get());
+    }
+
+    @Override
     public void delete(long id) {
         boolean transactionExists = transactionRepositoryJpa.existsById(id);
         if (!transactionExists){
