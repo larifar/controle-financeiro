@@ -1,6 +1,7 @@
 package com.app.controle_financeiro.infra.controller;
 
 import com.app.controle_financeiro.application.useCases.ICreateUser;
+import com.app.controle_financeiro.application.useCases.IDeleteUser;
 import com.app.controle_financeiro.application.useCases.ISaveUser;
 import com.app.controle_financeiro.domain.entities.User;
 import com.app.controle_financeiro.infra.dto.UserRequestDto;
@@ -18,6 +19,9 @@ public class UserSaveController {
     @Autowired
     private ISaveUser saveUser;
 
+    @Autowired
+    private IDeleteUser deleteUser;
+
     @PostMapping
     public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto userRequestDto){
         User user = createUser.save(UserMapper.fromDtoToDomain(userRequestDto));
@@ -29,6 +33,12 @@ public class UserSaveController {
         User user = UserMapper.fromDtoToDomain(userRequestDto);
         user.setId(id);
         saveUser.save(user);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") long id){
+        deleteUser.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

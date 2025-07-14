@@ -22,6 +22,11 @@ public class BeanConfig {
     }
 
     @Bean
+    public IDeleteUser deleteUser(IUserRepository userRepository){
+        return new DeleteUserImpl(userRepository);
+    }
+
+    @Bean
     public IFindUserById findById(IUserRepository userRepository){
         return new FindUserByIdImpl(userRepository);
     }
