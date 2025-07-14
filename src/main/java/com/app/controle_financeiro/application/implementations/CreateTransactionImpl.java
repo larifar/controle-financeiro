@@ -2,7 +2,7 @@ package com.app.controle_financeiro.application.implementations;
 
 import com.app.controle_financeiro.domain.entities.Transaction;
 import com.app.controle_financeiro.domain.exceptions.ExceptionCodeEnum;
-import com.app.controle_financeiro.domain.exceptions.TransactionalException;
+import com.app.controle_financeiro.domain.exceptions.TransactionException;
 import com.app.controle_financeiro.domain.exceptions.UserNotFoundException;
 import com.app.controle_financeiro.application.repository.ITransactionRepository;
 import com.app.controle_financeiro.application.repository.IUserRepository;
@@ -26,7 +26,7 @@ public class CreateTransactionImpl implements ICreateTransaction {
             throw new UserNotFoundException(ExceptionCodeEnum.USER01.getMessage(), ExceptionCodeEnum.USER01.getCode());
         }
         if (transaction.getValue() == null || transaction.getValue().compareTo(BigDecimal.ZERO) <=  0 ){
-            throw new TransactionalException(ExceptionCodeEnum.TRA002.getCode(), ExceptionCodeEnum.TRA002.getCode());
+            throw new TransactionException(ExceptionCodeEnum.TRA002.getCode(), ExceptionCodeEnum.TRA002.getCode());
         }
         if(transaction.getDate() == null){
             transaction.setDate(LocalDateTime.now());

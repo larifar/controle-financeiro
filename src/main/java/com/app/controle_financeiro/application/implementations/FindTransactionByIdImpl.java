@@ -4,7 +4,7 @@ import com.app.controle_financeiro.application.repository.ITransactionRepository
 import com.app.controle_financeiro.application.useCases.IFindTransactionById;
 import com.app.controle_financeiro.domain.entities.Transaction;
 import com.app.controle_financeiro.domain.exceptions.ExceptionCodeEnum;
-import com.app.controle_financeiro.domain.exceptions.TransactionalNotFoundException;
+import com.app.controle_financeiro.domain.exceptions.TransactionNotFoundException;
 
 import java.util.Optional;
 
@@ -16,10 +16,10 @@ public class FindTransactionByIdImpl implements IFindTransactionById {
     }
 
     @Override
-    public Transaction find(long id) throws TransactionalNotFoundException {
+    public Transaction find(long id) throws TransactionNotFoundException {
         Optional<Transaction> transaction = transactionRepository.findById(id);
         if (transaction.isEmpty()){
-            throw new TransactionalNotFoundException(ExceptionCodeEnum.TRA001.getMessage(), ExceptionCodeEnum.TRA001.getCode());
+            throw new TransactionNotFoundException(ExceptionCodeEnum.TRA001.getMessage(), ExceptionCodeEnum.TRA001.getCode());
         }
         return transaction.get();
     }
