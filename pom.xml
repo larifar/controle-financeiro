@@ -11,6 +11,7 @@
 	<groupId>com.app</groupId>
 	<artifactId>controle-financeiro</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
 	<name>controle-financeiro</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
@@ -20,6 +21,9 @@
 	<developers>
 		<developer/>
 	</developers>
+	<modules>
+		<module>bot-telegram</module>
+	</modules>
 	<scm>
 		<connection/>
 		<developerConnection/>
