@@ -17,8 +17,10 @@ public class UserMapper {
     }
 
     public static UserEntity toEntity(User domain){
+        Long id = domain.getId() > 0 ? domain.getId() : null;
+
         return new UserEntity(
-                domain.getId(),
+                id,
                 domain.getTelegramId(),
                 domain.getName(),
                 domain.getEmail(),
