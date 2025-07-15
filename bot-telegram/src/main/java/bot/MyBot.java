@@ -2,6 +2,8 @@ package bot;
 
 import bot.transactions.TransactionDto;
 import bot.transactions.TransactionEnums;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -9,7 +11,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,11 +35,13 @@ public class MyBot implements LongPollingSingleThreadUpdateConsumer {
             long chat_id = update.getMessage().getChatId();
 
             TransactionDto dto = messageToTransactionDto(message_text, chat_id);
+            boolean persists = sendTransactionToApi(dto);
+            String msgToUser = messageFrompersistence(persists);
 
             SendMessage message = SendMessage // Create a message object
                     .builder()
                     .chatId(chat_id)
-                    .text(String.valueOf(dto))
+                    .text(String.valueOf(msgToUser))
                     .build();
             try {
                 telegramClient.execute(message); // Sending our message object to user
@@ -99,5 +106,41 @@ public class MyBot implements LongPollingSingleThreadUpdateConsumer {
             return TransactionEnums.RECEITA;
         }
         return null;
+    }
+
+    private String messageFrompersistence(boolean persist){
+        if (persist){
+            return "Persistido!";
+        }
+        return "Erro ao persistir";
+    }
+
+    private boolean sendTransactionToApi(TransactionDto dto) {
+        try {
+            URL url = new URL("http://localhost:8081/transactions");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            String json = mapper.writeValueAsString(dto);
+
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = json.getBytes("utf-8");
+                os.write(input, 0, input.length);
+            }
+
+            int responseCode = connection.getResponseCode();
+            System.out.println("API response: " + responseCode);
+            if (responseCode> 200 && responseCode < 400){
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 }
