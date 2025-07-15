@@ -1,6 +1,4 @@
-package bot.transactions;
-
-import bot.transactions.TransactionEnums;
+package bot.domain.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package bot.transactions;
+package bot.domain.dto;
 
 public enum TransactionEnums {
     GASTO,
