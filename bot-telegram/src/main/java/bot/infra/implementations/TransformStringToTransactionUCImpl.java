@@ -3,6 +3,8 @@ package bot.infra.implementations;
 import bot.application.usecase.ITransformStringToTransactionDtoUC;
 import bot.domain.dto.TransactionDto;
 import bot.domain.dto.TransactionEnums;
+import bot.domain.exception.BotException;
+import bot.domain.exception.ExceptionCodeEnums;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,26 +27,15 @@ public class TransformStringToTransactionUCImpl implements ITransformStringToTra
         );
     }
 
-    private BigDecimal getValue(String message){
-        String value;
-        Pattern pattern = Pattern.compile("r\\$\\s*(\\d+[\\,\\.]?\\d*)");
+    private BigDecimal getValue(String message) {
+        Pattern pattern = Pattern.compile("r\\$\\s*(\\d+[\\.,]?\\d*)", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(message);
         if (matcher.find()) {
-            value = matcher.group(1);
+            String raw = matcher.group(1).replace(",", ".");
+            return new BigDecimal(raw);
         } else {
-            throw new IllegalArgumentException("Valor não encontrado na mensagem!");
+            throw new BotException(ExceptionCodeEnums.VALUE_NOT_FOUND);
         }
-
-        String digits = value.replaceAll("[^\\d]", "");
-        if (digits.isEmpty()) {
-            throw new IllegalArgumentException("Valor inválido: nenhum dígito encontrado.");
-        }
-        if (digits.length() == 1) {
-            digits = digits + "00";
-        } else if (digits.length() == 2) {
-            digits = digits + "0";
-        }
-        return new BigDecimal(digits).movePointLeft(2);
     }
 
     private TransactionEnums getType(String message){
@@ -54,7 +45,9 @@ public class TransformStringToTransactionUCImpl implements ITransformStringToTra
         if (message.contains("recebi") || message.contains("ganhei")) {
             return TransactionEnums.RECEITA;
         }
-        return null;
+        else {
+            throw new BotException(ExceptionCodeEnums.TYPE_NOT_FOUND);
+        }
     }
 
     private String getSubtype(String message){
