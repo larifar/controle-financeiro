@@ -1,44 +1,47 @@
 package bot.infra.implementations;
 
 import bot.application.usecase.IConnectionToApiUC;
+import bot.domain.exception.BotException;
+import okhttp3.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class ConnectionToApiUCImpl implements IConnectionToApiUC {
+    private final OkHttpClient client = new OkHttpClient();
 
     @Override
     public InputStream get(URL api) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) api.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("Content-Type", "application/json");
+        Request request = new Request.Builder()
+                .url(api)
+                .get()
+                .addHeader("Content-Type", "application/json")
+                .build();
 
-        int code = connection.getResponseCode();
-        if (code >= 200 && code < 300) {
-            return connection.getInputStream();
+        Response response = client.newCall(request).execute();
+        if (response.isSuccessful()) {
+            assert response.body() != null;
+            return response.body().byteStream();
         } else {
-            throw new IOException("Erro na requisição GET: " + code);
+            String error = response.body() != null ? response.body().string() : "";
+            throw new BotException("Erro na requisição GET: " + error, String.valueOf(response.code()));
         }
     }
 
     @Override
     public void post(URL api, String json) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) api.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setDoOutput(true);
+        RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
+        Request request = new Request.Builder()
+                .url(api)
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
 
-
-        try (OutputStream os = connection.getOutputStream()) {
-            os.write(json.getBytes("utf-8"));
-        }
-
-        int code = connection.getResponseCode();
-        if (code < 200 || code > 300) {
-            throw new IOException("Erro na requisição POST: " + code);
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) {
+            String error = response.body() != null ? response.body().string() : "";
+            throw new BotException("Erro na requisição POST: " + error, String.valueOf(response.code()));
         }
     }
 }

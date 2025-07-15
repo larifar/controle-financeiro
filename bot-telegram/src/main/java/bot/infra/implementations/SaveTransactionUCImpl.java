@@ -5,6 +5,7 @@ import bot.application.usecase.IGetUserByTelegramIdUC;
 import bot.application.usecase.ISaveTransactionUC;
 import bot.application.usecase.ITransformStringToTransactionDtoUC;
 import bot.domain.dto.TransactionDto;
+import bot.domain.exception.BotException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -41,9 +42,9 @@ public class SaveTransactionUCImpl implements ISaveTransactionUC {
             URL url = new URL(API_URL);
 
             connection.post(url, json);
-            return "Salvo com sucesso!";
+            return "Salvo com sucesso! = " + json;
 
-        }catch (IOException e){
+        }catch (BotException | IOException e){
             return msg+= e.getMessage();
         }
     }

@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class Main {
-    public static void main(String[] args) throws TelegramApiException, IOException {
+    public static void main(String[] args) throws IOException {
         Properties props = new Properties();
         try (InputStream input = Main.class.getClassLoader().getResourceAsStream("config.properties")) {
             props.load(input);
