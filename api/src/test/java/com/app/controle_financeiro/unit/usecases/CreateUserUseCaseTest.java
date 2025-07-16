@@ -7,16 +7,17 @@ import com.app.controle_financeiro.domain.entities.User;
 import com.app.controle_financeiro.domain.exceptions.UserAlreadyExistsException;
 import com.app.controle_financeiro.domain.exceptions.UserException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
 public class CreateUserUseCaseTest {
     @Mock
     IUserRepository userRepository;
