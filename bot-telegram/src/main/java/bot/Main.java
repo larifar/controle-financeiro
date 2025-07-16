@@ -31,7 +31,7 @@ public class Main {
         ITransformStringToTransactionDtoUC transactionDtoUC = new TransformStringToTransactionUCImpl();
 
         ISaveTransactionUC saveTransactionUC = new SaveTransactionUCImpl(
-                connectionToApiUC, getUserByTelegramIdUC, transactionDtoUC, API_URL + "transactions"
+                connectionToApiUC, getUserByTelegramIdUC, transactionDtoUC, API_URL
         );
 
         try (TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication()) {

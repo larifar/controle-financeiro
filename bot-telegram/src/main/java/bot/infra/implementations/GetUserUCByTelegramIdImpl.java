@@ -4,6 +4,7 @@ import bot.application.usecase.IConnectionToApiUC;
 import bot.application.usecase.IGetUserByTelegramIdUC;
 import bot.domain.dto.UserDto;
 import bot.domain.exception.BotException;
+import bot.domain.exception.BotUserNotFoundException;
 import bot.domain.exception.ExceptionCodeEnums;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -32,9 +33,7 @@ public class GetUserUCByTelegramIdImpl implements IGetUserByTelegramIdUC {
         }catch (MalformedURLException e){
             throw new BotException(ExceptionCodeEnums.URI_FORMAT);
         }catch (IOException e){
-            throw new BotException(ExceptionCodeEnums.USER_NOT_FOUND);
+            throw new BotUserNotFoundException(ExceptionCodeEnums.USER_NOT_FOUND);
         }
-
-
     }
 }

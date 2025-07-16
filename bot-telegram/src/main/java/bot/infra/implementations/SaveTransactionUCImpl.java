@@ -6,6 +6,7 @@ import bot.application.usecase.ISaveTransactionUC;
 import bot.application.usecase.ITransformStringToTransactionDtoUC;
 import bot.domain.dto.TransactionDto;
 import bot.domain.exception.BotException;
+import bot.domain.exception.BotUserNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -20,7 +21,7 @@ public class SaveTransactionUCImpl implements ISaveTransactionUC {
 
     private final String API_URL;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public SaveTransactionUCImpl(IConnectionToApiUC connection, IGetUserByTelegramIdUC getUserByTelegramIdUC, ITransformStringToTransactionDtoUC stringToTransactionDto, String apiUrl) {
         this.connection = connection;
@@ -31,7 +32,6 @@ public class SaveTransactionUCImpl implements ISaveTransactionUC {
 
     @Override
     public String save(String message, long telegramId){
-        String msg = "Erro ao salvar: ";
         try {
             long userId = getUserByTelegramIdUC.get(telegramId);
 
@@ -39,13 +39,16 @@ public class SaveTransactionUCImpl implements ISaveTransactionUC {
             mapper.registerModule(new JavaTimeModule());
             String json = mapper.writeValueAsString(dto);
 
-            URL url = new URL(API_URL);
+            URL url = new URL(API_URL + "transactions");
 
             connection.post(url, json);
-            return "Salvo com sucesso! = " + json;
+            return dto.type() + " salvo com sucesso!";
 
-        }catch (BotException | IOException e){
-            return msg+= e.getMessage();
+        }catch (BotUserNotFoundException e){
+            return "Usuário não cadastrado! Cadastre-se em: " + API_URL +"login";
+        }
+        catch (BotException | IOException e){
+            return "Erro ao salvar: " + e.getMessage();
         }
     }
 }

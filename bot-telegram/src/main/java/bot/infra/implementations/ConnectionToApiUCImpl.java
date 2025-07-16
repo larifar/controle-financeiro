@@ -2,6 +2,8 @@ package bot.infra.implementations;
 
 import bot.application.usecase.IConnectionToApiUC;
 import bot.domain.exception.BotException;
+import bot.domain.exception.BotUserNotFoundException;
+import bot.domain.exception.ExceptionCodeEnums;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -25,6 +27,9 @@ public class ConnectionToApiUCImpl implements IConnectionToApiUC {
             return response.body().byteStream();
         } else {
             String error = response.body() != null ? response.body().string() : "";
+            if (error.contains("USER-01")){
+                throw new BotUserNotFoundException(ExceptionCodeEnums.USER_NOT_FOUND);
+            }
             throw new BotException("Erro na requisição GET: " + error, String.valueOf(response.code()));
         }
     }
