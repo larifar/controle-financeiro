@@ -7,7 +7,7 @@ import com.app.controle_financeiro.domain.entities.Transaction;
 import com.app.controle_financeiro.domain.exceptions.TransactionNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 public class DeleteTransactionUseCaseTests {
 
-    @MockitoBean
+    @Mock
     ITransactionRepository transactionRepository;
 
     @Test
