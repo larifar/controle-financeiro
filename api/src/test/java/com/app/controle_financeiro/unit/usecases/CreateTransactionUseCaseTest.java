@@ -3,6 +3,7 @@ package com.app.controle_financeiro.unit.usecases;
 import com.app.controle_financeiro.application.implementations.CreateTransactionImpl;
 import com.app.controle_financeiro.application.repository.ITransactionRepository;
 import com.app.controle_financeiro.application.repository.IUserRepository;
+import com.app.controle_financeiro.application.useCases.ICreateTransaction;
 import com.app.controle_financeiro.domain.entities.Transaction;
 import com.app.controle_financeiro.domain.entities.TransactionTypeEnum;
 import com.app.controle_financeiro.domain.entities.User;
@@ -30,7 +31,7 @@ public class CreateTransactionUseCaseTest {
     @Test
     void shoudlNotCreateTransactionWhenUserNotFound(){
         Transaction transaction = new Transaction();
-        CreateTransactionImpl createTransaction = new CreateTransactionImpl(transactionRepository, userRepository);
+        ICreateTransaction createTransaction = new CreateTransactionImpl(transactionRepository, userRepository);
 
         transaction.setUserId(99L);
         transaction.setValue(new BigDecimal(10));
@@ -44,7 +45,7 @@ public class CreateTransactionUseCaseTest {
     @Test
     void shoudlNotCreateTransactionWithoutUserId(){
         Transaction transaction = new Transaction();
-        CreateTransactionImpl createTransaction = new CreateTransactionImpl(transactionRepository, userRepository);
+        ICreateTransaction createTransaction = new CreateTransactionImpl(transactionRepository, userRepository);
 
         transaction.setValue(new BigDecimal(10));
         transaction.setType(TransactionTypeEnum.GASTO);
@@ -57,7 +58,7 @@ public class CreateTransactionUseCaseTest {
     void shouldNotCreateTransactionWhenValueNegative(){
         Transaction transaction = new Transaction();
         User user = mock(User.class);
-        CreateTransactionImpl createTransaction = new CreateTransactionImpl(transactionRepository, userRepository);
+        ICreateTransaction createTransaction = new CreateTransactionImpl(transactionRepository, userRepository);
 
         transaction.setValue(new BigDecimal(-10));
         transaction.setType(TransactionTypeEnum.GASTO);
@@ -71,7 +72,7 @@ public class CreateTransactionUseCaseTest {
     void shouldNotCreateTransactionWhenValueNull(){
         Transaction transaction = new Transaction();
         User user = mock(User.class);
-        CreateTransactionImpl createTransaction = new CreateTransactionImpl(transactionRepository, userRepository);
+        ICreateTransaction createTransaction = new CreateTransactionImpl(transactionRepository, userRepository);
 
         transaction.setType(TransactionTypeEnum.GASTO);
         transaction.setUserId(99L);
@@ -84,7 +85,7 @@ public class CreateTransactionUseCaseTest {
     void shouldCreateTransactionWhenValid(){
         Transaction transaction = new Transaction();
         User user = mock(User.class);
-        CreateTransactionImpl createTransaction = new CreateTransactionImpl(transactionRepository, userRepository);
+        ICreateTransaction createTransaction = new CreateTransactionImpl(transactionRepository, userRepository);
 
         transaction.setValue(new BigDecimal(10));
         transaction.setType(TransactionTypeEnum.GASTO);
