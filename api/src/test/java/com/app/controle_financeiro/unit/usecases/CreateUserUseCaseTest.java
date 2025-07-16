@@ -1,23 +1,16 @@
 package com.app.controle_financeiro.unit.usecases;
 
-import com.app.controle_financeiro.application.implementations.CreateTransactionImpl;
 import com.app.controle_financeiro.application.implementations.CreateUserImpl;
-import com.app.controle_financeiro.application.repository.ITransactionRepository;
 import com.app.controle_financeiro.application.repository.IUserRepository;
 import com.app.controle_financeiro.application.useCases.ICreateUser;
-import com.app.controle_financeiro.domain.entities.Transaction;
-import com.app.controle_financeiro.domain.entities.TransactionTypeEnum;
 import com.app.controle_financeiro.domain.entities.User;
-import com.app.controle_financeiro.domain.exceptions.TransactionException;
 import com.app.controle_financeiro.domain.exceptions.UserAlreadyExistsException;
 import com.app.controle_financeiro.domain.exceptions.UserException;
-import com.app.controle_financeiro.domain.exceptions.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
