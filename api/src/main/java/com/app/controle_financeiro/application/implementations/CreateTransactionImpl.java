@@ -22,6 +22,9 @@ public class CreateTransactionImpl implements ICreateTransaction {
 
     @Override
     public Transaction save(Transaction transaction) {
+        if (transaction.getUserId() <= 0){
+            throw new UserNotFoundException(ExceptionCodeEnum.USER01.getMessage(), ExceptionCodeEnum.USER01.getCode());
+        }
         if (userRepository.findById(transaction.getUserId()).isEmpty()){
             throw new UserNotFoundException(ExceptionCodeEnum.USER01.getMessage(), ExceptionCodeEnum.USER01.getCode());
         }

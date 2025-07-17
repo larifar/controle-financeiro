@@ -14,7 +14,7 @@ import java.util.List;
 
 @Repository
 public interface ITransactionRepositoryJpa extends JpaRepository<TransactionEntity, Long> {
-    @Query("SELECT t FROM TransactionEntity t WHERE t.userId.id = :userId AND t.type = :type AND t.date BETWEEN :from AND :until")
+    @Query("SELECT t FROM TransactionEntity t WHERE t.userId.id = :userId AND(:type IS NULL OR t.type = :type) AND t.date BETWEEN :from AND :until")
     List<TransactionEntity> getFromDateUntilDatebyType(
             @Param("from") LocalDateTime from,
             @Param("until") LocalDateTime until,
