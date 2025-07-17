@@ -1,9 +1,7 @@
 package com.app.controle_financeiro.unit.usecases;
 
-import com.app.controle_financeiro.application.implementations.FindUserByEmailImpl;
 import com.app.controle_financeiro.application.implementations.FindUserByIdImpl;
 import com.app.controle_financeiro.application.repository.IUserRepository;
-import com.app.controle_financeiro.application.useCases.IFindUserByEmail;
 import com.app.controle_financeiro.application.useCases.IFindUserById;
 import com.app.controle_financeiro.domain.entities.User;
 import com.app.controle_financeiro.domain.exceptions.UserNotFoundException;
