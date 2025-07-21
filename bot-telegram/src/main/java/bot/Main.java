@@ -8,6 +8,7 @@ import bot.infra.implementations.ConnectionToApiUCImpl;
 import bot.infra.implementations.GetUserUCByTelegramIdImpl;
 import bot.infra.implementations.SaveTransactionUCImpl;
 import bot.infra.implementations.TransformStringToTransactionUCImpl;
+import okhttp3.OkHttpClient;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -24,9 +25,16 @@ public class Main {
 
         String API_URL = "http://localhost:8081/";
 
-        String botToken = props.getProperty("telegram.bot.token");
+        String botToken = System.getenv("BOT_TOKEN");
+        if (botToken == null || botToken.isEmpty()) {
+            InputStream input = Main.class.getClassLoader().getResourceAsStream("config.properties");
+            if (input != null) {
+                props.load(input);
+                botToken = props.getProperty("telegram.bot.token");
+            }
+        }
 
-        IConnectionToApiUC connectionToApiUC = new ConnectionToApiUCImpl();
+        IConnectionToApiUC connectionToApiUC = new ConnectionToApiUCImpl(new OkHttpClient());
         IGetUserByTelegramIdUC getUserByTelegramIdUC = new GetUserUCByTelegramIdImpl(connectionToApiUC, API_URL+"users/telegram/");
         ITransformStringToTransactionDtoUC transactionDtoUC = new TransformStringToTransactionUCImpl();
 
@@ -39,9 +47,13 @@ public class Main {
             System.out.println("MyAmazingBot successfully started!");
 
             Thread.currentThread().join();
-        } catch (Exception e) {
+        }catch (TelegramApiException e){
+            e.getMessage();
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
+
 
     }
 }
