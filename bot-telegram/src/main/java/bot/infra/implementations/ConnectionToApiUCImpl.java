@@ -11,7 +11,12 @@ import java.io.InputStream;
 import java.net.URL;
 
 public class ConnectionToApiUCImpl implements IConnectionToApiUC {
-    private final OkHttpClient client = new OkHttpClient();
+    private final OkHttpClient client;
+
+    public ConnectionToApiUCImpl(OkHttpClient client) {
+        this.client = client;
+    }
+
 
     @Override
     public InputStream get(URL api) throws IOException {
