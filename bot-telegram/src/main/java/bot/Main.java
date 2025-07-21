@@ -23,7 +23,7 @@ public class Main {
             props.load(input);
         }
 
-        String API_URL = "http://localhost:8081/";
+        String API_URL = System.getenv("API_URL");
 
         String botToken = System.getenv("BOT_TOKEN");
         if (botToken == null || botToken.isEmpty()) {
