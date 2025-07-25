@@ -40,7 +40,7 @@ public class ConnectionToApiUCImpl implements IConnectionToApiUC {
     }
 
     @Override
-    public void post(URL api, String json) throws IOException {
+    public Response post(URL api, String json) throws IOException {
         RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
         Request request = new Request.Builder()
                 .url(api)
@@ -53,5 +53,6 @@ public class ConnectionToApiUCImpl implements IConnectionToApiUC {
             String error = response.body() != null ? response.body().string() : "";
             throw new BotException("Erro na requisição POST: " + error, String.valueOf(response.code()));
         }
+        return response;
     }
 }
