@@ -12,18 +12,18 @@ import org.telegram.telegrambots.abilitybots.api.objects.Locality;
 import org.telegram.telegrambots.abilitybots.api.objects.Privacy;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class MyBot extends AbilityBot{
-    private final TelegramClient telegramClient;
     private final ISaveTransactionUC saveTransactionUC;
     private final IGetListTransactionsUC getListTransactionsUC;
 
     public MyBot(TelegramClient client, ISaveTransactionUC saveTransactionUC, IGetListTransactionsUC getListTransactionsUC) {
         super(client, "ControleFinanceiro_larifar_bot");
-        telegramClient = client;
         this.saveTransactionUC = saveTransactionUC;
         this.getListTransactionsUC = getListTransactionsUC;
     }
@@ -93,11 +93,21 @@ public class MyBot extends AbilityBot{
                 .locality(Locality.ALL)
                 .privacy(Privacy.PUBLIC)
                 .action(ctx ->{
+                    String msgToUser = "";
+                    List<TransactionDto> gastos = getTransactionsDay(ctx.chatId(), TransactionEnums.GASTO);
+                    List<TransactionDto> receitas = getTransactionsDay(ctx.chatId(), TransactionEnums.RECEITA);
+                    if(gastos != null && !gastos.isEmpty()){
+                        String mgsGastos = "GASTOS: \n\n" + formatList(gastos) + "\n*****************************\n";
+                        msgToUser += mgsGastos;
+                    }
+                    if (receitas != null && !receitas.isEmpty()){
+                        String mgsReceitas = "RECEITAS: \n\n" + formatList(receitas) + "\n*****************************\n";
+                        msgToUser+=mgsReceitas;
+                    }
+                    if (msgToUser.isEmpty()){
+                        msgToUser = "Não há transações nesse dia.";
+                    }
 
-                    List<TransactionDto> list = getTransactionsDay(ctx.chatId(), TransactionEnums.GASTO);
-
-
-                    String msgToUser = list == null ? "Não há transações nesse dia" : list.toString();
                     silent.send(msgToUser
                             , ctx.chatId());})
                 .build();
@@ -115,6 +125,17 @@ public class MyBot extends AbilityBot{
             e.printStackTrace();
         }
         return null;
+    }
+
+    private String formatList(List<TransactionDto> list){
+        String text = "";
+        BigDecimal total = BigDecimal.valueOf(0);
+        for (TransactionDto dto : list){
+            total = total.add(dto.value());
+            text += "Valor: R$" + dto.value() + " - Dia: " + dto.date().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) + " - Como: " + dto.subtype() +"\n";
+        }
+        text += "Total: R$" + total;
+        return text;
     }
 
 }
