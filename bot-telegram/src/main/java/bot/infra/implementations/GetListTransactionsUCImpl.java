@@ -7,7 +7,6 @@ import bot.domain.dto.TransactionDto;
 import bot.domain.dto.TransactionEnums;
 import bot.domain.exception.BotException;
 import bot.domain.exception.ExceptionCodeEnums;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.HttpUrl;
@@ -34,7 +33,7 @@ public class GetListTransactionsUCImpl implements IGetListTransactionsUC {
     }
 
     @Override
-    public List<TransactionDto> get(LocalDateTime from, LocalDateTime until, long telegramId, TransactionEnums type) throws BotException, MalformedURLException, JsonProcessingException {
+    public List<TransactionDto> get(LocalDateTime from, LocalDateTime until, long telegramId, TransactionEnums type) throws BotException, MalformedURLException{
 
         long userId = getUserByTelegramIdUC.get(telegramId);
 

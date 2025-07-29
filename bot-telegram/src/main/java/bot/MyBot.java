@@ -1,44 +1,93 @@
 package bot;
 
 import bot.application.usecase.ISaveTransactionUC;
-import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
-import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.abilitybots.api.bot.AbilityBot;
+import org.telegram.telegrambots.abilitybots.api.objects.Ability;
+import org.telegram.telegrambots.abilitybots.api.objects.Flag;
+import org.telegram.telegrambots.abilitybots.api.objects.Locality;
+import org.telegram.telegrambots.abilitybots.api.objects.Privacy;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-public class MyBot implements LongPollingSingleThreadUpdateConsumer {
+public class MyBot extends AbilityBot{
     private final TelegramClient telegramClient;
     private final ISaveTransactionUC saveTransactionUC;
 
-    public MyBot(String token, ISaveTransactionUC saveTransactionUC) {
-        telegramClient = new OkHttpTelegramClient(token);
+    public MyBot(TelegramClient client, ISaveTransactionUC saveTransactionUC) {
+        super(client, "ControleFinanceiro_larifar_bot");
+        telegramClient = client;
         this.saveTransactionUC = saveTransactionUC;
     }
 
     @Override
-    public void consume(Update update) {
+    public long creatorId() {
+        return Long.parseLong(System.getenv("CREATOR_ID"));
+    }
 
-        if (update.hasMessage() && update.getMessage().hasText()) {
+    private String showDefaultMessage(){
+        return "Olá! Irei ser seu assistente financeiro!\n"
+                + "Digite /help para ver minhas habilidades ";
+    }
 
-            String message_text = update.getMessage().getText();
-            long chat_id = update.getMessage().getChatId();
+    private String showAbilities(){
+        return "Essas são minhas habilidades:\n"+
+                "- /help : mostro minhas habilidades\n"+
+                "- /start : se for sua primeira vez\n"+
+                "- /add : para adicionar um gasto ou receita\n" +
+                "- /dia : para ver o resumo financeiro do seu dia\n"+
+                "- /mes : para ver o resumo financeiro do seu mês\n";
+    }
 
+    public Ability help(){
+        return Ability
+                .builder()
+                .name("help")
+                .info("Mostra habilidades")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action(ctx -> silent.send(showAbilities(), ctx.chatId()))
+                .build();
+    }
 
-            String msgToUser = saveTransactionUC.save(message_text, chat_id);
+    public Ability defaultMessage(){
+        return Ability
+                .builder()
+                .name(DEFAULT)
+                .flag(Flag.MESSAGE)
+                .info("Mensagem inicial")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action(ctx -> silent.send(showDefaultMessage(), ctx.chatId()))
+                .build();
+    }
 
-            SendMessage message = SendMessage // Create a message object
-                    .builder()
-                    .chatId(chat_id)
-                    .text(String.valueOf(msgToUser))
-                    .build();
-            try {
-                telegramClient.execute(message); // Sending our message object to user
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        }
+    public Ability add(){
+        return Ability
+                .builder()
+                .name("add")
+                .info("Adicionar Gasto/Receita")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action(ctx ->{
+                    String text = String.join(" ", ctx.arguments());
+                    String msgToUser = saveTransactionUC.save(text, ctx.chatId());
+                    silent.send(msgToUser
+                        , ctx.chatId());})
+                .build();
+    }
+
+    public Ability dia(){
+        return Ability
+                .builder()
+                .name("dia")
+                .info("Resumo financeiro do seu dia")
+                .locality(Locality.ALL)
+                .privacy(Privacy.PUBLIC)
+                .action(ctx ->{
+                    String text = String.join(" ", ctx.arguments());
+                    String msgToUser = saveTransactionUC.save(text, ctx.chatId());
+                    silent.send(msgToUser
+                            , ctx.chatId());})
+                .build();
     }
 
 }

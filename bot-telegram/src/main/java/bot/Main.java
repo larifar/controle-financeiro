@@ -9,8 +9,9 @@ import bot.infra.implementations.GetUserUCByTelegramIdImpl;
 import bot.infra.implementations.SaveTransactionUCImpl;
 import bot.infra.implementations.TransformStringToTransactionUCImpl;
 import okhttp3.OkHttpClient;
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +35,8 @@ public class Main {
             }
         }
 
+        TelegramClient telegramClient = new OkHttpTelegramClient(botToken);
+
         IConnectionToApiUC connectionToApiUC = new ConnectionToApiUCImpl(new OkHttpClient());
         IGetUserByTelegramIdUC getUserByTelegramIdUC = new GetUserUCByTelegramIdImpl(connectionToApiUC, API_URL+"users/telegram/");
         ITransformStringToTransactionDtoUC transactionDtoUC = new TransformStringToTransactionUCImpl();
@@ -43,12 +46,12 @@ public class Main {
         );
 
         try (TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication()) {
-            botsApplication.registerBot(botToken, new MyBot(botToken, saveTransactionUC));
+            MyBot bot = new MyBot(telegramClient, saveTransactionUC);
+            bot.onRegister();
+            botsApplication.registerBot(botToken, bot);
             System.out.println("MyAmazingBot successfully started!");
 
             Thread.currentThread().join();
-        }catch (TelegramApiException e){
-            e.getMessage();
         }catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
