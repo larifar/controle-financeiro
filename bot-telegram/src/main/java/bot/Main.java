@@ -1,13 +1,7 @@
 package bot;
 
-import bot.application.usecase.IConnectionToApiUC;
-import bot.application.usecase.IGetUserByTelegramIdUC;
-import bot.application.usecase.ISaveTransactionUC;
-import bot.application.usecase.ITransformStringToTransactionDtoUC;
-import bot.infra.implementations.ConnectionToApiUCImpl;
-import bot.infra.implementations.GetUserUCByTelegramIdImpl;
-import bot.infra.implementations.SaveTransactionUCImpl;
-import bot.infra.implementations.TransformStringToTransactionUCImpl;
+import bot.application.usecase.*;
+import bot.infra.implementations.*;
 import okhttp3.OkHttpClient;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
@@ -45,8 +39,10 @@ public class Main {
                 connectionToApiUC, getUserByTelegramIdUC, transactionDtoUC, API_URL
         );
 
+        IGetListTransactionsUC getListTransactionsUC = new GetListTransactionsUCImpl(connectionToApiUC, API_URL, getUserByTelegramIdUC);
+
         try (TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication()) {
-            MyBot bot = new MyBot(telegramClient, saveTransactionUC);
+            MyBot bot = new MyBot(telegramClient, saveTransactionUC, getListTransactionsUC);
             bot.onRegister();
             botsApplication.registerBot(botToken, bot);
             System.out.println("MyAmazingBot successfully started!");

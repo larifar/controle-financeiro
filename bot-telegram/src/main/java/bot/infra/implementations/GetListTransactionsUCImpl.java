@@ -9,6 +9,7 @@ import bot.domain.exception.BotException;
 import bot.domain.exception.ExceptionCodeEnums;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import okhttp3.HttpUrl;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class GetListTransactionsUCImpl implements IGetListTransactionsUC {
         this.connection = connection;
         API_URL = apiUrl;
         this.getUserByTelegramIdUC = getUserByTelegramIdUC;
+        mapper.registerModule(new JavaTimeModule());
     }
 
     @Override
