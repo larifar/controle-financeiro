@@ -45,6 +45,11 @@
             <version>5.12.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots-abilities</artifactId>
+            <version>9.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

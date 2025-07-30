@@ -48,6 +48,7 @@ public class SaveTransactionUCImpl implements ISaveTransactionUC {
             return "Usuário não cadastrado! Cadastre-se em: " + API_URL +"login";
         }
         catch (BotException | IOException e){
+            e.printStackTrace();
             return "Erro ao salvar: " + e.getMessage();
         }
     }
